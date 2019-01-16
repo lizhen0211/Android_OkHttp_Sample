@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -50,6 +53,31 @@ public class SimpleDemoActivity extends Activity {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        result = response.body().string();
+        return result;
+    }
+
+    private String executeMultipartFormData(String url) throws IOException {
+        String result = null;
+        File file = new File("");
+        //OkHttpClient client = new OkHttpClient();
+        okhttp3.OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
+        OkHttpClient client = httpBuilder
+                //设置超时
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(150, TimeUnit.SECONDS)
+                .build();
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("image/png"), file))
+                //.addFormDataPart("source", new String("wash_car".getBytes("utf-8")))
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
                 .build();
         Response response = client.newCall(request).execute();
         result = response.body().string();
@@ -115,6 +143,20 @@ public class SimpleDemoActivity extends Activity {
             public void run() {
                 try {
                     String response = executePostForm("");
+                    Log.e(SimpleDemoActivity.class.getSimpleName(), response);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void onMultipartClick(View view) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String response = executeMultipartFormData("");
                     Log.e(SimpleDemoActivity.class.getSimpleName(), response);
                 } catch (IOException e) {
                     e.printStackTrace();
