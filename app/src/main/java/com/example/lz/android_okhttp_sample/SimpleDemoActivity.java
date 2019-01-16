@@ -7,6 +7,7 @@ import android.view.View;
 
 import java.io.IOException;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -23,10 +24,29 @@ public class SimpleDemoActivity extends Activity {
 
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
-    private String executePost(String url, String json) throws IOException {
+    private String executePostJSON(String url, String json) throws IOException {
         String result = null;
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        result = response.body().string();
+        return result;
+    }
+
+    //private static final MediaType FORM_URLENCODED = MediaType.parse("application/x-www-form-urlencoded");
+
+    private String executePostForm(String url) throws IOException {
+        String result = null;
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("", "")
+                .add("", "")
+                .add("", "")
+                .build();
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
@@ -74,13 +94,27 @@ public class SimpleDemoActivity extends Activity {
         }).start();
     }
 
-    public void onSimplePostClick(View view) {
+    public void onSimpleJSONPostClick(View view) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String json = bowlingJson("Jesse", "Jake");
                 try {
-                    String response = executePost("http://www.roundsapp.com/post", json);
+                    String response = executePostJSON("http://www.roundsapp.com/post", json);
+                    Log.e(SimpleDemoActivity.class.getSimpleName(), response);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void onSimpleFormPostClick(View view) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String response = executePostForm("");
                     Log.e(SimpleDemoActivity.class.getSimpleName(), response);
                 } catch (IOException e) {
                     e.printStackTrace();
