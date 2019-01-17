@@ -73,7 +73,7 @@ public class SimpleDemoActivity extends Activity {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("image/png"), file))
-                //.addFormDataPart("source", new String("wash_car".getBytes("utf-8")))
+                .addFormDataPart("source", new String("".getBytes("utf-8")))
                 .build();
         Request request = new Request.Builder()
                 .url(url)
