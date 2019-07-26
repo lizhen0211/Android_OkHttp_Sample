@@ -17,4 +17,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, SimpleDemoActivity.class);
         startActivity(intent);
     }
+
+    public void onRecipesClick(View view) {
+        Intent intent = new Intent(MainActivity.this, RecipesActivity.class);
+        startActivity(intent);
+    }
 }
