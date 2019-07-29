@@ -22,4 +22,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, RecipesActivity.class);
         startActivity(intent);
     }
+
+    public void onInterceptorsClick(View view) {
+        Intent intent = new Intent(MainActivity.this, InterceptorsActivity.class);
+        startActivity(intent);
+    }
 }
