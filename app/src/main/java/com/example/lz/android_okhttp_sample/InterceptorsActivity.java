@@ -14,10 +14,22 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import okio.BufferedSink;
 import okio.GzipSink;
 import okio.Okio;
 
+/**
+ * RetryAndFollowUpInterceptor、
+ * BridgeInterceptor、
+ * CacheInterceptor、
+ * ConnectInterceptor、
+ * 自定义的 network Interceptor、
+ * CallServerInterceptor的顺序将这些拦截器添加到列表中
+ * 后面可以看到这个顺序就是请求实际执行的顺序
+ *
+ * @see okhttp3.RealCall#getResponseWithInterceptorChain
+ */
 public class InterceptorsActivity extends Activity {
 
     private static final String TAG = "Interceptor";
@@ -30,7 +42,7 @@ public class InterceptorsActivity extends Activity {
      * Observe the application’s original intent. Unconcerned with OkHttp-injected headers like If-None-Match.
      * Permitted to short-circuit and not call Chain.proceed().
      * Permitted to retry and make multiple calls to Chain.proceed().
-     *
+     * <p>
      * Network Interceptors
      * <p>
      * Able to operate on intermediate responses like redirects and retries.
@@ -184,7 +196,7 @@ public class InterceptorsActivity extends Activity {
      */
     public void onNetworkInterceptorsClick(View view) {
         final OkHttpClient client = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new LoggingInterceptor())
+                .addNetworkInterceptor(new MyLoggingInterceptor())
                 .build();
         new Thread(new Runnable() {
             @Override
@@ -193,6 +205,38 @@ public class InterceptorsActivity extends Activity {
                     Request request = new Request.Builder()
                             .url("http://www.publicobject.com/helloworld.txt")
                             .header("User-Agent", "OkHttp Example")
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+                    response.body().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    HttpLoggingInterceptor LOGGING_INTERCEPTOR = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+        @Override public void log(String message) {
+            Log.e("logging",message);
+        }
+    });
+
+    public void onLogingInterceptorsClick(View view){
+        LOGGING_INTERCEPTOR.setLevel( HttpLoggingInterceptor.Level.BASIC);
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .addNetworkInterceptor(LOGGING_INTERCEPTOR)
+                .build();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    RequestBody formBody = new FormBody.Builder()
+                            .add("search", "Jurassic Park")
+                            .build();
+                    Request request = new Request.Builder()
+                            .url("http://httpbin.org/post")
+                            .post(formBody)
                             .build();
 
                     Response response = client.newCall(request).execute();
@@ -218,7 +262,7 @@ public class InterceptorsActivity extends Activity {
      */
     public void onApplicationInterceptorsClick(View view) {
         final OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new LoggingInterceptor())
+                .addInterceptor(new MyLoggingInterceptor())
                 .build();
         new Thread(new Runnable() {
             @Override
@@ -241,7 +285,7 @@ public class InterceptorsActivity extends Activity {
 }
 
 
-class LoggingInterceptor implements Interceptor {
+class MyLoggingInterceptor implements Interceptor {
 
     /**
      * Interceptors are a powerful mechanism that can monitor, rewrite, and retry calls.

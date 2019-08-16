@@ -58,5 +58,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rewriting_requests_btn" />
 
-
+    <Button
+        android:id="@+id/loging_interceptors_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="15dp"
+        android:onClick="onLogingInterceptorsClick"
+        android:text="Loging Interceptors"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rewriting_responses_btn" />
 </android.support.constraint.ConstraintLayout>
