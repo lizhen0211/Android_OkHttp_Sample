@@ -43,10 +43,10 @@ public class CustomDnsActivity extends Activity {
         OkHttpClient client = new OkHttpClient().newBuilder().dns(new Dns() {
             @Override
             public List<InetAddress> lookup(String hostname) throws UnknownHostException {
-                InetAddress[] inetAddresses = DNSResolover.getInstance().getAllByName();
-                InetAddress[] addresses = INetAddressUtil.filter(inetAddresses);
-                if (addresses != null && addresses.length > 0) {
-                    return Arrays.asList(addresses);
+                List<InetAddress> inetAddresses = DNSResolover.getInstance().getAllByName(hostname);
+                inetAddresses = INetAddressUtil.filter(inetAddresses);
+                if (inetAddresses != null && inetAddresses.size() > 0) {
+                    return inetAddresses;
                 } else {
                     List<InetAddress> adds = Dns.SYSTEM.lookup(hostname);
                     return adds;

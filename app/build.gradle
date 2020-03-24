@@ -31,6 +31,7 @@ dependencies {
     implementation 'com.squareup.okio:okio:2.2.2'*/
     implementation("com.squareup.moshi:moshi:1.8.0")
 
+    implementation 'dnsjava:dnsjava:2.1.9'
     //MockWebServer
     //OkHttp includes a library for testing HTTP, HTTPS, and HTTP/2 clients.
     testImplementation("com.squareup.okhttp3:mockwebserver:4.0.1")
