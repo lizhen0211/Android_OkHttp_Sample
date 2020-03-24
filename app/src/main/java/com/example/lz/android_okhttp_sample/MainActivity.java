@@ -27,4 +27,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, InterceptorsActivity.class);
         startActivity(intent);
     }
+
+    public void onCustomDnsClick(View view) {
+        Intent intent = new Intent(MainActivity.this, CustomDnsActivity.class);
+        startActivity(intent);
+    }
 }
